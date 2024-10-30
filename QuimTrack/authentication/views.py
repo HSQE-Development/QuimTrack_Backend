@@ -52,9 +52,7 @@ class AuthViewSet(viewsets.ModelViewSet, BaseController):
                     "token"
                 ],  # Este es el diccionario con "refresh" y "access"
             }
-
             auth_user_serializer = AuthUserSerializer(response_data)
-
             return self.send_response(
                 {"auth_user": auth_user_serializer.data}, "Inicio Correcto."
             )
