@@ -27,6 +27,20 @@ class TrackingState(models.Model):
         return self.name
 
 
+class ServiceType(SoftDeleteModel, TimeStampedModel):
+    name = models.CharField(max_length=100)
+    identify = models.CharField(max_length=100, unique=True)
+
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.identify = lower_replace_whitespaces(self.name)
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
 # Create your models here.
 class Tracking(SoftDeleteModel, TimeStampedModel):
     user = models.ForeignKey(
@@ -41,6 +55,14 @@ class Tracking(SoftDeleteModel, TimeStampedModel):
         TrackingClassification,
         on_delete=models.CASCADE,
         related_name="classifications",
+        blank=False,
+        default=None,
+        null=True,
+    )
+    service_type = models.ForeignKey(
+        ServiceType,
+        on_delete=models.CASCADE,
+        related_name="service_types",
         blank=False,
         default=None,
         null=True,
@@ -62,6 +84,7 @@ class Tracking(SoftDeleteModel, TimeStampedModel):
         null=True,
     )
     resource_hours = models.IntegerField(null=True)
+    asigned_resource = models.IntegerField(null=True)
     expiration_date = models.DateField(null=True)
     state = models.ForeignKey(
         TrackingState,

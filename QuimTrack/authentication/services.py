@@ -3,6 +3,8 @@ from .services_interface import IAuthService
 from typing import Optional
 from QuimTrack.exceptions import NotFoundError, UnauthenticatedException
 from django.db import transaction
+from django.db.models.functions import Upper
+from django.db.models import Q
 
 
 class RoleService:
@@ -44,6 +46,24 @@ class UserService:
             return User.objects.get(email=email)
         except User.DoesNotExist:
             raise NotFoundError("Usuario no encontrado o inactivo", code=404)
+
+    @staticmethod
+    def get_user_by_name(full_name: str) -> Optional[User]:
+        try:
+            names = full_name.strip().split(" ", 1)
+
+            if len(names) < 2:
+                raise ValueError("El nombre completo debe incluir nombre y apellido.")
+            first_name, last_name = names[0].upper(), names[1].upper()
+            return User.objects.annotate(
+                first_name_upper=Upper("first_name"), last_name_upper=Upper("last_name")
+            ).get(Q(first_name_upper=first_name) & Q(last_name_upper=last_name))
+        except User.DoesNotExist:
+            raise NotFoundError(
+                f"Usuario no encontrado o inactivo {first_name} {last_name}", code=404
+            )
+        except ValueError as e:
+            raise NotFoundError(f"{str(e)} -eeee", code=400)
 
     @staticmethod
     @transaction.atomic
