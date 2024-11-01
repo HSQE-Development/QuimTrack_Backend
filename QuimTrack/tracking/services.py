@@ -32,6 +32,11 @@ class TrackingClassificationService:
 
 
 class TrackingService:
+    def get_all_trackings():
+        return Tracking.objects.all()
+
+    @staticmethod
+    @transaction.atomic
     def create(tracking_data: dict):
         user_name = tracking_data["user_name"]
         user_asigned = tracking_data.get("user_asigned", None)
