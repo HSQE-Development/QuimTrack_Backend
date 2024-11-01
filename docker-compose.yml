@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+   
+  diagnosis_backend:
+    build:
+      context: ./QuimTrack
+      dockerfile: Dockerfile
+    command: sh -c "/usr/local/bin/wait-for-it.sh 162.215.135.37:33080 -- python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && python manage.py runserver 0.0.0.0:9000"
+    restart: always
+    container_name: quimtrack_api
+    volumes:
+      - ./QuimTrack:/app
+    ports:
+      - "9000:9000"
+    env_file:
+      - ./.env
+    depends_on: []

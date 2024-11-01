@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-zt&^e0=%5y_z4s82&866hd0=(2!0a!m-1(h#n$4xsdulmizdk7"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", False)
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
@@ -86,11 +89,13 @@ WSGI_APPLICATION = "QuimTrack.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "quimtrack",  # Nombre de la base de datos
-        "USER": "root",  # Usuario de MySQL
-        "PASSWORD": "",  # Contraseña de MySQL
-        "HOST": "localhost",  # Host donde se encuentra la base de datos (usualmente 'localhost')
-        "PORT": "3306",  # Puerto de MySQL (por defecto es 3306)
+        "NAME": os.getenv("DB_NAME"),  # Nombre de la base de datos
+        "USER": os.getenv("DB_USER"),  # Usuario de MySQL
+        "PASSWORD": os.getenv("DB_PASSWORD"),  # Contraseña de MySQL
+        "HOST": os.getenv(
+            "DB_HOST"
+        ),  # Host donde se encuentra la base de datos (usualmente 'localhost')
+        "PORT": os.getenv("DB_PORT"),  # Puerto de MySQL (por defecto es 3306)
         "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
     }
 }
